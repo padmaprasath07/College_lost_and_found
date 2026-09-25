@@ -1,99 +1,93 @@
-# 🎓 CampusFind - College Lost & Found Portal
+# 🎓 CampusFind — College Lost & Found Management System
 
-A centralized web application designed for university campuses to streamline the reporting, tracking, and recovery of lost personal belongings.
-
----
-
-## 📌 What is CampusFind?
-
-Every day on college campuses, hundreds of valuable items—student ID cards, earphones, textbooks, calculators, water bottles, and keys—go missing in libraries, cafeterias, lecture halls, and sports complexes. 
-
-Typically, students rely on scattered WhatsApp groups, informal Instagram story notices, or physical lost-and-found boxes with no search capabilities or verification mechanisms. This often leads to items remaining unclaimed, privacy concerns, or wrongful claims.
-
-**CampusFind** solves this by providing a unified digital platform specifically tailored to university campuses, making item recovery transparent, fast, and secure.
+**CampusFind** is a centralized web platform designed for university campuses to streamline the reporting, tracking, and recovery of lost personal belongings among students, faculty, and campus staff.
 
 ---
 
-## ✨ Key Features
+## 📌 Problem Statement
 
-- **Dual Reporting System**:
-  - **Report Lost Item**: Quickly post details of items you have misplaced with date, time, and last seen location.
-  - **Report Found Item**: Post items discovered across campus to help return them to their rightful owners.
+On university campuses with thousands of students moving between classrooms, libraries, cafeterias, and labs, misplaced items are an everyday occurrence. Currently, colleges handle this through:
 
-- **Intelligent Campus Search & Filtering**:
-  - Filter items by specific campus zones (Central Library, Canteen, Engineering Blocks, Science Labs, Gym, Auditorium).
-  - Categorize by item type (Electronics, ID Cards & Wallets, Books & Notes, Keys, Accessories, and more).
-  - Instant text search across item titles, descriptions, and location tags.
-
-- **Ownership Verification (Anti-Fraud Claim System)**:
-  - Finders can attach a **security question** or prompt (e.g., *"What wallpaper is on the lock screen?"*, *"What name is inside the ID sleeve?"*, or *"Describe the keychain"*).
-  - Claimants must provide verifiable proof before sensitive contact information or handover instructions are shared.
-
-- **Status & Lifecycle Tracking**:
-  - Items move through clear lifecycle states: `Reported` ➔ `Under Claim Review` ➔ `Claimed / Resolved`.
-
-- **Student Privacy & Safe Handovers**:
-  - Prevents public spam and protects student contact numbers from being exposed to the open web.
+- **Disorganized WhatsApp & Telegram Groups**: Messages get buried quickly under regular chat traffic.
+- **Social Media Stories**: Temporary, untrackable, and lack any search capabilities.
+- **Physical Lost-and-Found Boxes**: Require students to physically visit multiple campus buildings with no visibility into what is stored.
+- **False Claims & Privacy Risks**: Anyone can falsely claim an item, and students often share sensitive contact information publicly.
 
 ---
 
-## 🔄 How It Works
+## 💡 The Solution
+
+**CampusFind** transforms campus lost-and-found management into an organized, searchable, and secure digital portal. It provides a structured workflow where:
+1. Students can quickly search across campus-specific locations and item categories.
+2. Finders can list items without exposing their private phone numbers to the public.
+3. Claimants must prove genuine ownership through security questions before an item is released.
+
+---
+
+## ✨ Core Capabilities & Features
+
+### 1. Dual Reporting System
+- **Report Lost Item**: Post details about an item you misplaced, including the last known location, date, time, and distinctive characteristics.
+- **Report Found Item**: Post items discovered on campus so the owner can identify and recover them.
+
+### 2. Campus Zone & Category Filtering
+- **Campus Locations**: Filter listings by specific campus zones such as Central Library, Canteen / Food Court, Engineering Blocks, Science Labs, Auditorium, and Sports Complex.
+- **Item Categories**: Browse by categories such as Electronics, ID Cards & Wallets, Books & Study Material, Keys, Accessories, and Personal Belongings.
+- **Instant Search**: Real-time keyword search across item titles, descriptions, and campus areas.
+
+### 3. Anti-Fraud Ownership Verification
+- To prevent wrongful claims, finders can set a **Security Verification Challenge** (e.g., *"What is the lock screen wallpaper?"*, *"What name is inside the ID holder?"*, or *"Describe the keychain"*).
+- The claimant must answer the challenge or describe hidden identifiers before contact information or pickup instructions are released.
+
+### 4. Item Lifecycle Management
+- Clear status indicators for every listing:
+  - **Available / Reported**: Open for community browsing.
+  - **Under Claim Review**: A claim has been submitted and is pending verification.
+  - **Resolved / Claimed**: The item has been successfully reunited with its owner.
+
+### 5. Privacy & Campus Security
+- Student phone numbers and personal emails are never displayed publicly.
+- All claims and listings are tied to verified campus roll numbers or student email accounts.
+
+---
+
+## 🔄 The Item Recovery Workflow
 
 ```text
-[ Finder / Loser ]  ──►  Reports Item (Photos, Campus Location, Security Question)
-                                    │
-                                    ▼
-[ Search & Browse ] ──►  Filtered by Campus Zone & Item Category
-                                    │
-                                    ▼
-[ Claim Request ]   ──►  Claimant answers Security Question & provides proof
-                                    │
-                                    ▼
-[ Verification ]    ──►  Finder reviews proof & approves valid owner
-                                    │
-                                    ▼
-[ Item Resolved ]   ──►  Item marked as Claimed / Handover Complete
+1. REPORT
+   Student reports a lost or found item with details, photos, and campus location.
+      │
+      ▼
+2. DISCOVER
+   Students search and filter by campus zones and categories.
+      │
+      ▼
+3. VERIFY & CLAIM
+   The claimant submits proof or answers the security question set by the finder.
+      │
+      ▼
+4. APPROVE & HANDOVER
+   Finder verifies the claimant's answer and arranges a safe campus handover.
+      │
+      ▼
+5. RESOLVE
+   The item status updates to "Resolved / Returned".
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 👥 Who Is This For?
 
-- **Frontend**: React (Vite), Modern Vanilla CSS / Design Tokens, Lucide Icons
-- **Backend**: Node.js & Express.js *(RESTful API)*
+- **Students**: Quickly locate misplaced laptops, ID cards, chargers, keys, and notebooks.
+- **Faculty & Staff**: Return items left behind in lecture halls and laboratories.
+- **Campus Security Desks & Library Staff**: Maintain an organized, transparent digital registry of handed-in belongings instead of keeping manual logbooks.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Frontend**: React, Modern Vanilla CSS / Design Tokens, Lucide Icons
+- **Backend**: Node.js & Express.js (RESTful Architecture)
 - **Database**: MongoDB & Mongoose
-- **File Storage**: Cloudinary (for item photos & proof documents)
+- **Image Storage**: Cloudinary Media Storage
 - **Authentication**: JWT & Secure Password Hashing
-
----
-
-## 🚀 Getting Started Locally
-
-### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
-
-### Installation & Run
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/padmaprasath07/College_lost_and_found.git
-   cd College_lost_and_found
-   ```
-
-2. **Run the React Frontend:**
-   ```bash
-   cd client
-   npm install
-   npm run dev
-   ```
-
-3. Open your browser and navigate to:
-   ```text
-   http://localhost:5173
-   ```
-
----
-
-## 📄 License
-This project is open-source and available under the [MIT License](LICENSE).
