@@ -12,6 +12,7 @@ build/
 
 # Independent subprojects
 sports_tournament/
+rev1/
 
 # Environment variables
 .env
