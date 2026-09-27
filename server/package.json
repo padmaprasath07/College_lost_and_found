@@ -1,0 +1,29 @@
+{
+  "name": "campusfind-server",
+  "version": "1.0.0",
+  "description": "Production RESTful API and MongoDB database backend for CampusFind - College Lost & Found Management System",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node seed/seed.js"
+  },
+  "keywords": [
+    "mern-stack",
+    "mongodb",
+    "express",
+    "college-lost-and-found",
+    "rest-api",
+    "mongoose"
+  ],
+  "author": "CampusFind Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0"
+  }
+}

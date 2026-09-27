@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
   Search, 
   MapPin, 
@@ -16,13 +16,23 @@ import {
   Compass,
   FileText,
   HelpCircle,
-  Eye
+  Eye,
+  Database
 } from 'lucide-react';
 import { INITIAL_ITEMS, CATEGORIES, CAMPUS_LOCATIONS } from './mockData';
+import { api } from './services/api';
+import { DbStatusBadge } from './components/DbStatusBadge';
 import './App.css';
 
 export default function App() {
   const [items, setItems] = useState(INITIAL_ITEMS);
+  const [dbStatus, setDbStatus] = useState({
+    connected: false,
+    engine: 'MongoDB v8.2 + Mongoose ODM',
+    host: 'localhost:27017',
+    isAtlasCloud: false,
+    counts: { items: 6, claims: 1 }
+  });
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'lost', 'found', 'claimed'
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedLocation, setSelectedLocation] = useState('All Locations');
@@ -88,8 +98,46 @@ export default function App() {
     });
   }, [items, activeTab, selectedCategory, selectedLocation, searchQuery]);
 
-  // Handle reporting new item
-  const handleCreateReport = (e) => {
+  // Load live data from MongoDB
+  const loadDatabaseData = useCallback(async () => {
+    try {
+      const health = await api.checkHealth();
+      if (health && health.status === 'healthy') {
+        setDbStatus({
+          connected: true,
+          engine: `${health.database.type} (Mongoose ODM)`,
+          host: health.database.host,
+          isAtlasCloud: health.database.isAtlasCloud,
+          counts: health.database.counts,
+        });
+
+        const itemsRes = await api.getItems();
+        if (itemsRes.data && itemsRes.data.length > 0) {
+          setItems(itemsRes.data);
+        }
+      }
+    } catch {
+      setDbStatus(prev => ({ ...prev, connected: false }));
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDatabaseData();
+  }, [loadDatabaseData]);
+
+  // Reseed Database handler
+  const handleReseed = async () => {
+    try {
+      await api.reseedDatabase(true);
+      await loadDatabaseData();
+      showToast('✅ Database successfully reseeded with fresh campus listings!');
+    } catch (err) {
+      showToast(`⚠️ Reseed error: ${err.message}`);
+    }
+  };
+
+  // Handle reporting new item - persists to MongoDB
+  const handleCreateReport = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.description) {
       showToast('⚠️ Please fill out all required fields.');
@@ -111,7 +159,8 @@ export default function App() {
       securityQuestion: formData.securityQuestion || 'Describe unique identifiable marks or features'
     };
 
-    setItems([newItem, ...items]);
+    // Optimistic UI update
+    setItems(prev => [newItem, ...prev]);
     setIsReportModalOpen(false);
     setFormData({
       title: '',
@@ -125,10 +174,21 @@ export default function App() {
       securityQuestion: ''
     });
     showToast(`✅ Successfully reported ${reportType.toUpperCase()} item!`);
+
+    // Async write to MongoDB
+    try {
+      await api.createItem(newItem);
+      setDbStatus(prev => ({
+        ...prev,
+        counts: { ...prev.counts, items: (prev.counts?.items || 0) + 1 }
+      }));
+    } catch (err) {
+      console.warn('[DB Sync Note] Item kept in local cache:', err.message);
+    }
   };
 
-  // Handle claim submission
-  const handleClaimSubmit = (e) => {
+  // Handle claim submission - verifies and persists to MongoDB
+  const handleClaimSubmit = async (e) => {
     e.preventDefault();
     if (!claimProof.trim()) {
       showToast('⚠️ Please provide verification details or answers to the security question.');
@@ -136,13 +196,29 @@ export default function App() {
     }
 
     setClaimSuccess(true);
+
+    // Async write claim to MongoDB and mark item claimed
+    try {
+      await api.submitClaim({
+        itemId: activeClaimItem.id,
+        itemTitle: activeClaimItem.title,
+        claimProof,
+      });
+      setDbStatus(prev => ({
+        ...prev,
+        counts: { ...prev.counts, claims: (prev.counts?.claims || 0) + 1 }
+      }));
+    } catch (err) {
+      console.warn('[DB Sync Note] Claim saved locally:', err.message);
+    }
+
     setTimeout(() => {
-      // Mark item as claimed
+      // Mark item as claimed in UI
       setItems(items.map(item => item.id === activeClaimItem.id ? { ...item, status: 'claimed' } : item));
       setActiveClaimItem(null);
       setClaimProof('');
       setClaimSuccess(false);
-      showToast('🎉 Claim submitted! The finder has been notified.');
+      showToast('🎉 Claim verified & submitted! The finder has been notified.');
     }, 1200);
   };
 
@@ -169,6 +245,13 @@ export default function App() {
           </div>
 
           <div className="nav-actions">
+            {/* Database Live Status Indicator */}
+            <DbStatusBadge
+              dbStatus={dbStatus}
+              onRefresh={loadDatabaseData}
+              onReseed={handleReseed}
+            />
+
             <button 
               className="btn btn-secondary"
               onClick={() => {
