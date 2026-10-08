@@ -1075,7 +1075,7 @@
   }
 }
 
-/* Database Diagnostic Badge & Modal */
+/* Database Diagnostic Badge */
 .db-badge-pill {
   display: inline-flex;
   align-items: center;
@@ -1084,8 +1084,9 @@
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  cursor: default;
+  pointer-events: none;
+  user-select: none;
   border: 1px solid transparent;
   outline: none;
 }
@@ -1096,20 +1097,10 @@
   border-color: rgba(16, 185, 129, 0.3);
 }
 
-.db-badge-pill.connected:hover {
-  background: rgba(16, 185, 129, 0.2);
-  transform: translateY(-1px);
-}
-
 .db-badge-pill.offline {
   background: rgba(245, 158, 11, 0.1);
   color: #d97706;
   border-color: rgba(245, 158, 11, 0.3);
-}
-
-.db-badge-pill.offline:hover {
-  background: rgba(245, 158, 11, 0.2);
-  transform: translateY(-1px);
 }
 
 .db-pulse-dot {
