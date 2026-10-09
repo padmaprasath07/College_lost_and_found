@@ -1,5 +1,9 @@
 // CampusFind API Service - Connects React Frontend to Express & MongoDB Backend
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? '/api'
+    : 'http://localhost:5001/api');
 
 /**
  * Robust fetch wrapper with timeout and JSON parsing
